@@ -7,14 +7,13 @@
 #define fogMachinePin 2
 
 // Variables para controlar el temporizador y la bandera
-uint32_t timer;
-bool flag;
 
 // Configuración inicial del programa
 void setup() {
   // Configurar el pin del LDR como entrada y el pin de la máquina de humo como salida
   pinMode(ldrPin, INPUT);
   pinMode(fogMachinePin, OUTPUT);
+  Serial.begin(9600);
 }
 
 // Función principal que se ejecuta continuamente
@@ -22,21 +21,15 @@ void loop() {
   // Leer el valor de luminosidad del LDR
   int brightness = analogRead(ldrPin);
 
+  Serial.println(brightness);
+  
   // Verificar si la luminosidad es mayor o igual al umbral y la máquina no está activada
-  if ((brightness <= turnOnTreshold) and (flag == 0)) {
-    // Encender la máquina de humo, iniciar el temporizador y establecer la bandera en 1
+  if (brightness <= turnOnTreshold) {
     digitalWrite(fogMachinePin, 1);
-    timer = millis();
-    flag = 1;
   }
 
   // Verificar si la luminosidad es menor al umbral, resetear la bandera a 0
   if (brightness > turnOnTreshold) {
-    flag = 0;
-  }
-
-  // Verificar si ha pasado el tiempo de encendido, apagar la máquina de humo
-  if ((millis() - timer) >= turnOnTime) {
     digitalWrite(fogMachinePin, 0);
   }
 }
